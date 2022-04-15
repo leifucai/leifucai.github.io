@@ -1,0 +1,178 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>
+      Intro to MapView - Create a 2D map | Sample | ArcGIS API for JavaScript
+      4.23
+    </title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+      /* #viewDiv{
+        float: left;
+      } */
+      body{
+        position: relative;
+      }
+      #basemapgallerydiv{
+        position: absolute; left: 85%; top: 50px;
+        width: 200px;
+        height: 100%;
+        /* background-color: blue; */
+      }
+      .top{
+        box-sizing: border-box;
+        height: 50px;
+        width: 100%;
+        background-color: rgb(191, 233, 255);
+        /* color: #000;
+        font-size: 30px;
+        line-height: 50px; */
+        padding-left: 50px;
+        
+      }
+      .top b{
+        font-size: 35px;
+        line-height: 50px;
+      }
+      .top i{
+        font-size: 15px;
+        font-style: normal;
+      }
+      #searchdiv{
+        position: absolute; left: 70px; top: 67px;
+        /* width: 10px;
+        height: 10px;
+        background-color: #000; */
+      }
+      #legenddiv{
+        position: absolute; top: 50px; left: 72%;
+      }
+      #measure{
+        position: absolute; left: 35%; top: 50px;
+      }
+      #other{
+        position: absolute; left: 67%; top: 340px;
+        height: 300px;
+      }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.23/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.23/"></script>
+
+    <script>
+      require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/BasemapGallery", "esri/widgets/ScaleBar", "esri/widgets/Search", "esri/widgets/LayerList", "esri/widgets/Legend", "esri/rest/print", "esri/widgets/Editor", "esri/widgets/Sketch", "esri/widgets/Print"],
+       (Map, MapView, FeatureLayer, BasemapGallery, ScaleBar, Search, LayerList, Legend, print, Editor, Sketch, Print) => {
+        //加载地图
+
+        const map = new Map({
+          basemap: "topo-vector"
+        });
+        //加载视图
+
+        const view = new MapView({
+          container: "viewDiv",
+          map: map,
+          zoom: 15,
+          center: [119.23212468624082, 26.09]
+        });
+        //加载要素图层
+
+        const featureLayer = new FeatureLayer({
+          url: "https://www.geosceneonline.cn/server/rest/services/Hosted/webgischapter/FeatureServer/0"
+        });
+        map.add(featureLayer);
+
+        //图层列表
+        const layerList = new LayerList({
+        view: view
+        });
+        view.ui.add(layerList, {
+        position: "top-left"
+        });
+
+        //加载比例尺
+        const scaleBar = new ScaleBar({
+          view:view,
+          style:"ruler"
+        })
+        view.ui.add(scaleBar, {
+          position: "bottom-left"
+        });
+
+        //加载底图库
+        let basemapGallery = new BasemapGallery({
+        view: view,
+        container: "basemapgallerydiv",
+        });
+
+        //加载搜索框
+        const searchWidget = new Search({
+        view: view,
+        container:"searchdiv"
+        });
+
+        //加载图例
+        let legend = new Legend({
+        view: view,
+        container:"legenddiv",
+        layerInfos: [
+              {
+                layer: featureLayer,
+                title: "农大事件"
+              }
+            ]
+        });
+        //编辑器
+        const editor = new Editor({
+        view: view
+        });
+        view.ui.add(editor, "top-left");
+
+        //测量
+        let sketch = new Sketch({
+        view: view,
+        container:"measure"
+        });
+        // view.ui.add(measurementWidget, "top-left");
+
+        //咱也不知道咋翻译
+        view.when(() => {
+          const print = new Print({
+            view: view,
+            container:"other",
+            printServiceUrl:
+              "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+          });
+          // view.ui.add(print, "top-right");
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <div class="top">
+      <b>欢迎来到福建农林大学</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <i>这是用Arcgis API for javascript制作</i>
+    </div>
+    <div id="viewDiv"></div>
+    <div id="basemapgallerydiv"></div>
+    <div id="searchdiv"></div>
+    <div id="legenddiv"></div>
+    <div id="measure"></div>
+    <div id="other"></div>
+  </body>
+</html>
